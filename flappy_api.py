@@ -15,7 +15,7 @@ returns the <num_score> highest scores
 def get_n_score(num_score):
     l_score = []
     try:
-        cursor = mongo.db.flappy_score.find({}).sort([("score",-1)]).limit(num_score)
+        cursor = mongo.db.flappy_score.find({}, {'_id': False}).sort([("score",-1)]).limit(num_score)
         for score in cursor:
             l_score.append(score)
         response = make_response(dumps(l_score), 200)
@@ -31,7 +31,7 @@ returns all scores
 def get_score():
     l_score = []
     try:
-        cursor = mongo.db.flappy_score.find({}).sort([("score",-1)])
+        cursor = mongo.db.flappy_score.find({}, {'_id': False}).sort([("score",-1)])
         for score in cursor:
                 tmp = score
                 l_score.append(tmp)
