@@ -46,10 +46,10 @@ implements player's score & name in the database
 """
 @app.route('/flappy_api/setscore', methods=['POST'])
 def set_score():
-    print (request)
     if not request.get_json:
         make_response(jsonify({'error':'No Json find'}), 404)
     try:
+        #TODO: Implement secret key to prevent cheating
         data = request.get_json()
         mongo.db.flappy_score.insert({"score":data['score'], "name":data['playerName']})
         response = make_response(jsonify({'response':'Insertion done'}), 200)
