@@ -10,7 +10,7 @@ mongo = PyMongo(app, config_prefix='MONGO1')
 """
 returns the <num_score> highest scores 
 """
-@app.route('/flappy_api/getscore/<int:num_score>', methods=['GET'])
+@app.route('/flappy_api/scores/<int:num_score>', methods=['GET'])
 def get_n_score(num_score):
     l_score = []
     try:
@@ -26,7 +26,7 @@ def get_n_score(num_score):
 """
 returns all scores 
 """
-@app.route('/flappy_api/getscore', methods=['GET'])
+@app.route('/flappy_api/scores/', methods=['GET'])
 def get_score():
     l_score = []
     try:
@@ -42,7 +42,7 @@ def get_score():
 """
 implements player's score & name in the database
 """
-@app.route('/flappy_api/setscore', methods=['POST'])
+@app.route('/flappy_api/scores', methods=['POST'])
 def set_score():
     if not request.get_json:
         make_response(jsonify({'error':'No Json find'}), 404)
@@ -54,7 +54,7 @@ def set_score():
         response.headers['Content-Type'] = 'application/json'
         return response
     except:
-        response = make_response(jsonify({'error':'the database doesn \'t appear to be available'}), 500)
+        response = make_response(jsonify({'error':'the database doesn \'t appear to be available post'}), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
 
