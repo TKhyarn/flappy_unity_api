@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, make_response, request
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
-import sys
 
 app = Flask(__name__)
 
@@ -33,8 +32,7 @@ def get_score():
     try:
         cursor = mongo.db.flappy_score.find({}, {'_id': False}).sort([("score",-1)])
         for score in cursor:
-                tmp = score
-                l_score.append(tmp)
+                l_score.append(score)
         response = make_response(dumps(l_score), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -56,7 +54,6 @@ def set_score():
         response.headers['Content-Type'] = 'application/json'
         return response
     except:
-        print (sys.exc_info()[0])
         response = make_response(jsonify({'error':'the database doesn \'t appear to be available'}), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
