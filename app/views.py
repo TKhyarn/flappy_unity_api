@@ -1,13 +1,10 @@
 from flask import Flask, jsonify, make_response, request
-from flask_pymongo import PyMongo
+from app import app
 from bson.json_util import dumps
-from flask_cors import CORS
 import datetime
-
-app = Flask(__name__)
-CORS(app, resources=r'/flappy_api/*')
-app.config['MONGO1_DBNAME'] = 'flappy'
-mongo = PyMongo(app, config_prefix='MONGO1')
+import re
+import json
+from . import mongo
 
 """
 returns the <num_score> highest scores 
@@ -16,6 +13,7 @@ returns the <num_score> highest scores
 def get_n_score(num_score):
     l_score = []
     try:
+        num_score = int(num_score)
         cursor = mongo.db.flappy_score.find({}, {'_id': False}).sort([("score",-1), ("date",1)]).limit(num_score)
         for score in cursor:
             l_score.append(score)
@@ -42,17 +40,17 @@ def get_score():
         return make_response(jsonify({'error':'the database doesn \'t appear to be available'}), 504)
 
 """
-implements player's score & name in the database
+implements player's score & name in the database.
+TODO: Implement Authentification to avoid cheating
 """
 @app.route('/flappy_api/scores/', methods=['POST'])
 def set_score():
     if not request.get_json:
         make_response(jsonify({'error':'No Json find'}), 404)
     try:
-        #TODO: Implement secret key to prevent cheating
-        now = datetime.datetime.now()
         data = request.get_json()
-        mongo.db.flappy_score.insert({"score":data['score'], "name":data['playerName'], "date":now})
+        now = datetime.datetime.now()
+        mongo.db.flappy_score.insert({"score":int(data['score']), "name":data['playerName'], "date":now})
         response = make_response(jsonify({'response':'Insertion done'}), 201)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -60,7 +58,3 @@ def set_score():
         response = make_response(jsonify({'error':'the database doesn \'t appear to be available post'}), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
-
-if __name__ == '__main__':
-    # TODO: not suitable for prod environment
-    app.run(host='0.0.0.0', debug=True)
